@@ -24,14 +24,26 @@ Agile Planning:
 Sprint 1:
 Setting up repository and descriptions for the Desktop application.
 
+User Story:
+
 Sprint 2:
 Setting up repository and descriptions for the Web application.
 
-Sprint 3:
-Implementing and developing the core features 
+User Story:
 
-Sprint 4:
-Implementing the user-role based features.
+Sprint 3: Implementing and developing the core features 
 
-Sprint 5:
-Final Testing/polishing
+User Story 1: As a worker, I want to be able to see all the assignments and view each one of them
+
+User Story 2: As a manager, I want to be able to create assignments.
+
+Sprint 4: Implementing the user-role based features.
+
+User Story 1: As a worker, I want to be able update the status of an assignment I completed.
+
+User Story 2: As a manager, I want to be able to assign due dates, list the workers responsible, and edit the assignments I created
+
+
+Sprint 5: Final Testing/polishing
+
+User Story: As a user, I want to be able to use the product without encountering issues.
