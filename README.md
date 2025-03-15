@@ -20,13 +20,18 @@ Notes can be left on assignments by either uesr to add, ask, and/or explain info
 Dark mode for the application  
 
 Agile Planning:
+
 Sprint 1:
 Setting up repository and descriptions for the Desktop application.
+
 Sprint 2:
-Setting up repository and descriptions for the Web application
+Setting up repository and descriptions for the Web application.
+
 Sprint 3:
 Implementing and developing the core features 
+
 Sprint 4:
 Implementing the user-role based features.
+
 Sprint 5:
 Final Testing/polishing
