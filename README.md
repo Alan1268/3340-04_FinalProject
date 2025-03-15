@@ -21,29 +21,10 @@ Dark mode for the application
 
 Agile Planning:
 
-Sprint 1:
-Setting up repository and descriptions for the Desktop application.
+Sprint 1: Build a layout of the project and Implement the core features. 
 
-User Story:
+Create assignments and allow users to view them. Managers will be able to edit and change assignments, while workers will be able to change the statuses of the assignments but not the assignments themselves.
 
-Sprint 2:
-Setting up repository and descriptions for the Web application.
+User Story 1:  As a worker, I want to view, and be able to update the status of an assignment, so that completed tasks can be marked when completed.
 
-User Story:
-
-Sprint 3: Implementing and developing the core features 
-
-User Story 1: As a worker, I want to be able to see all the assignments, so I can know what assignments need to be done.
-
-User Story 2: As a manager, I want to be able to create assignments and give them names aswell as descriptions, so that it can be organized.
-
-Sprint 4: Implementing the user-role based features.
-
-User Story 1: As a worker, I want to be able update the status of an assignment, so that completed tasks can be marked when completed.
-
-User Story 2: As a manager, I want to be able to assign due dates, list the workers involved, and edit the assignments I created, so the workers know who is responsible for the assignment as well as when it is due.
-
-
-Sprint 5: Final Testing/polishing
-
-User Story: As a general user, I want to be able to use the product without encountering issues, so I can track assignments efficiently
+User Story 2: As a manager, I want to be able to create assignments, assign due dates to those assignemtns, list the workers involved, and edit the assignments I created, so the workers know who is responsible for the assignment as well as when it is due.
