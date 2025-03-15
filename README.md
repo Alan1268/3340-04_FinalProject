@@ -33,17 +33,17 @@ User Story:
 
 Sprint 3: Implementing and developing the core features 
 
-User Story 1: As a worker, I want to be able to see all the assignments and view each one of them
+User Story 1: As a worker, I want to be able to see all the assignments, so I can know what assignments need to be done.
 
-User Story 2: As a manager, I want to be able to create assignments.
+User Story 2: As a manager, I want to be able to create assignments and give them names aswell as descriptions, so that it can be organized.
 
 Sprint 4: Implementing the user-role based features.
 
-User Story 1: As a worker, I want to be able update the status of an assignment I completed.
+User Story 1: As a worker, I want to be able update the status of an assignment, so that completed tasks can be marked when completed.
 
-User Story 2: As a manager, I want to be able to assign due dates, list the workers responsible, and edit the assignments I created
+User Story 2: As a manager, I want to be able to assign due dates, list the workers involved, and edit the assignments I created, so the workers know who is responsible for the assignment as well as when it is due.
 
 
 Sprint 5: Final Testing/polishing
 
-User Story: As a user, I want to be able to use the product without encountering issues.
+User Story: As a general user, I want to be able to use the product without encountering issues, so I can track assignments efficiently
