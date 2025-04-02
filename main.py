@@ -1,3 +1,5 @@
+import subprocess
+import os
 from tkinter import *
 
 #Widget is a object with specific information or function
@@ -15,16 +17,30 @@ def on_click():
 	label = Label(root, text=pie)
 	label.grid(row=0,column=0,columnspan = 2, padx = 20)
 
+def run_Task():
+    if drop_var.get() == "Admin":
+        script_path = "secondary.py"
+        if os.path.exists(script_path):
+            print(f"Running {script_path}...")
+            subprocess.run(["python", script_path])
+    else:
+        if drop_var.get() == "Worker":
+            script_path = "worker.py"
+            if os.path.exists(script_path):
+                print(f"Running {script_path}...")
+                subprocess.run(["python", script_path])
 
 def show_fields(*args):
     """ Show the Admin and Password fields when a role is selected. """
+    role = drop_var.get()
     if drop_var.get() in ["Admin", "Worker"]:  # If a valid role is selected
+        admin_label.config(text=role)
         admin_label.grid(row=3, column=0, columnspan=2, pady=5)  # Show "Admin"
         username_label.grid(row=4, column=0, pady=5, padx=0)  # Show username label
         password_label.grid(row=6, column=0, pady=5, padx=0)  # Show password label
         item_user.grid(row=5, column=0, columnspan=2, padx =20)  # Show password entry
         item_password.grid(row=7, column=0, columnspan=2, padx =20)  # Show password entry
-        enter_button = Button(root, text="Enter")
+        enter_button = Button(root, text="Enter", command=run_Task)
         enter_button.grid(row=8, column=0, columnspan=2, pady=10)
         drop_menu.grid(row=10,column=0,columnspan = 2, padx = 20, pady = 60)
 
@@ -36,6 +52,7 @@ label = Label(root, text="Welcome").grid(row=1,column=0,columnspan = 2, padx = 2
 button = Button(root, text="Click Here", command=on_click)
 
 # Admin Label 
+
 admin_label = Label(root, text="Admin")
 admin_label.grid(row=3, column=0, columnspan=2, pady=5)
 admin_label.grid_remove()  # Hide it at the start
@@ -69,4 +86,5 @@ drop_var.trace_add("write", show_fields)
 
 
 #Call the main loop for displaying the root window
+root.mainloop()
 root.mainloop()
