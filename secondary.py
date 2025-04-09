@@ -54,27 +54,29 @@ class ToDoApp:
             self.remove_list_button.config(state=tk.DISABLED)
 
     def add_task(self):
-        if not self.current_list_name:
-            messagebox.showerror("Error", "Please select or create a list first.")
-            return
+    if not self.current_list_name:
+        messagebox.showerror("Error", "Please select or create a list first.")
+        return
 
-        task = simpledialog.askstring("Task Name", "Enter task name:")
-        if task:
-            due_date = simpledialog.askstring("Due Date", "Enter due date:")
-            assigned = simpledialog.askstring("Assigned to", "Enter assigned names:")
-            description = simpledialog.askstring("Task Description", "Enter task description:")
+    task = simpledialog.askstring("Task Name", "Enter task name:")
+    if task:
+        due_date = simpledialog.askstring("Due Date", "Enter due date:")
+        priority = simpledialog.askstring("Priority", "Enter priority (Low, Medium, High):")
+        assigned = simpledialog.askstring("Assigned to", "Enter assigned names:")
+        description = simpledialog.askstring("Task Description", "Enter task description:")
 
-            task_info = {
-                "task": task,
-                "due_date": due_date,
-                "assigned": assigned,
-                "description": description,
-                "completed": False
-            }
+        task_info = {
+            "task": task,
+            "due_date": due_date,
+            "priority": priority,
+            "assigned": assigned,
+            "description": description,
+            "completed": False
+        }
 
-            self.lists[self.current_list_name].append(task_info)
-            self.update_task_listbox()
-            self.save_lists()
+        self.lists[self.current_list_name].append(task_info)
+        self.update_task_listbox()
+        self.save_lists()
     
     def mark_as_done(self):
         selected = self.task_listbox.curselection()
