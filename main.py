@@ -19,7 +19,7 @@ def on_click():
 
 def run_Task():
     if drop_var.get() == "Sign In":
-        script_path = "worker.py"
+        script_path = "temp1.py"
         if os.path.exists(script_path):
             print(f"Running {script_path}...")
             subprocess.run(["python", script_path])
