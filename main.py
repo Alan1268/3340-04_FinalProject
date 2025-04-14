@@ -23,13 +23,13 @@ def run_Task():
         if os.path.exists(script_path):
             print(f"Running {script_path}...")
             subprocess.run(["python", script_path])
-    else:
+    '''else:
         if drop_var.get() == "Sign Up":
             script_path = "worker.py"
             if os.path.exists(script_path):
                 print(f"Running {script_path}...")
                 subprocess.run(["python", script_path])
-
+     '''
 def show_fields(*args):
     """ Show the Admin and Password fields when a role is selected. """
     role = drop_var.get()
