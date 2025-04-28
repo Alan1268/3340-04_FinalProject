@@ -48,10 +48,12 @@ class ToDoApp:
     
     def apply_role_restrictions(self):
         if self.user_role == "Assignee":
-            self.add_button.config(state=tk.DISABLED)
-            self.remove_button.config(state=tk.DISABLED)
-            self.new_list_button.config(state=tk.DISABLED)
-            self.remove_list_button.config(state=tk.DISABLED)
+            self.add_button.pack_forget()
+            self.remove_button.pack_forget()
+            self.new_list_button.pack_forget()
+            self.remove_list_button.pack_forget()
+            self.save_button.pack_forget()
+
 
     def add_task(self):
         if not self.current_list_name:
@@ -85,6 +87,7 @@ class ToDoApp:
             self.lists[self.current_list_name][index]["completed"] = True
             self.update_task_listbox()
             self.save_lists()
+
     def remove_task(self):
         selected = self.task_listbox.curselection()
         if selected and self.current_list_name:
@@ -216,32 +219,117 @@ class LoginScreen:
     def __init__(self, root):
         self.root = root
         self.root.title("Login")
-        self.root.geometry("300x200")
+        self.root.geometry("300x250")
 
-        tk.Label(root, text="Enter your name:").pack()
-        self.username_entry = tk.Entry(root)
-        self.username_entry.pack()
-        
-        tk.Label(root, text="Select Role:").pack()
-        self.role_var = tk.StringVar(value="Assignee")
-        self.assigner_button = tk.Radiobutton(root, text="Assigner", variable=self.role_var, value="Assigner")
-        self.assigner_button.pack()
-        self.assignee_button = tk.Radiobutton(root, text="Assignee", variable=self.role_var, value="Assignee")
-        self.assignee_button.pack()
-        
+        tk.Label(root, text="Enter your email:").pack()
+        self.email_entry = tk.Entry(root)
+        self.email_entry.pack()
+
+        tk.Label(root, text="Enter your password:").pack()
+        self.password_entry = tk.Entry(root, show="*")
+        self.password_entry.pack()
+
         self.login_button = tk.Button(root, text="Login", command=self.login)
-        self.login_button.pack()
-    
+        self.login_button.pack(pady=5)
+
+        self.register_button = tk.Button(root, text="Register New User", command=self.open_register_window)
+        self.register_button.pack(pady=5)
+
+        self.load_users()
+
+    def load_users(self):
+        try:
+            with open("user_list.json", "r") as file:
+                content = file.read().strip()
+                if not content:
+                    self.users = {}
+                else:
+                    self.users = json.loads(content)
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.users = {}
+
+
     def login(self):
-        username = self.username_entry.get()
-        role = self.role_var.get()
-        if username:
+        email = self.email_entry.get()
+        password = self.password_entry.get()
+
+        user_info = self.users.get(email)
+        if user_info and user_info["password"] == password:
+            role = user_info["role"]
             self.root.destroy()
             main_app = tk.Tk()
             app = ToDoApp(main_app, role)
             main_app.mainloop()
         else:
-            messagebox.showerror("Error", "Please enter your name.")
+            messagebox.showerror("Error", "Invalid email or password.")
+
+    def open_register_window(self):
+        register_window = tk.Toplevel(self.root)
+        register_window.title("Register New User")
+        register_window.geometry("400x450")
+
+        tk.Label(register_window, text="Enter your email:").pack()
+        email_entry = tk.Entry(register_window)
+        email_entry.pack()
+
+        tk.Label(register_window, text="Enter password:").pack()
+        password_entry = tk.Entry(register_window, show="*")
+        password_entry.pack()
+
+        tk.Label(register_window, text="Confirm password:").pack()
+        confirm_password_entry = tk.Entry(register_window, show="*")
+        confirm_password_entry.pack()
+
+        tk.Label(register_window, text="Select Role:").pack()
+        role_var = tk.StringVar(value="Assignee")
+        tk.Radiobutton(register_window, text="Assigner", variable=role_var, value="Assigner").pack()
+        tk.Radiobutton(register_window, text="Assignee", variable=role_var, value="Assignee").pack()
+
+        def register_user():
+            email = email_entry.get()
+            password = password_entry.get()
+            confirm_password = confirm_password_entry.get()
+            role = role_var.get()
+
+            if not email or not password or not confirm_password:
+                messagebox.showerror("Error", "Please fill all fields.")
+                return
+
+            if password != confirm_password:
+                messagebox.showerror("Error", "Passwords do not match.")
+                return
+
+            if email in self.users:
+                messagebox.showerror("Error", "User already exists.")
+                return
+
+            self.users[email] = {
+                "password": password,
+                "role": role
+            }
+            with open("user_list.json", "w") as file:
+                json.dump(self.users, file)
+
+            messagebox.showinfo("Success", "User registered successfully!")
+            register_window.destroy()
+
+        tk.Button(register_window, text="Register", command=register_user).pack(pady=10)
+
+    
+    def login(self):
+        email = self.email_entry.get()
+        password = self.password_entry.get()
+
+        user_info = self.users.get(email)
+        if user_info and user_info["password"] == password:
+            role = user_info["role"]
+            self.root.destroy()
+            main_app = tk.Tk()
+            app = ToDoApp(main_app, role)
+            main_app.mainloop()
+        else:
+            messagebox.showerror("Error", "Invalid email or password.")
+
 
 if __name__ == "__main__":
     root = tk.Tk()
