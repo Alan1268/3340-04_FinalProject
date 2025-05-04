@@ -60,25 +60,55 @@ class ToDoApp:
             messagebox.showerror("Error", "Please select or create a list first.")
             return
 
-        task = simpledialog.askstring("Task Name", "Enter task name:")
-        if task:
-            due_date = simpledialog.askstring("Due Date", "Enter due date:")
-            priority = simpledialog.askstring("Priority", "Enter priority (Low, Medium, High):")
-            assigned = simpledialog.askstring("Assigned to", "Enter assigned names:")
-            description = simpledialog.askstring("Task Description", "Enter task description:")
+        popup = tk.Toplevel(self.root)
+        popup.title("Add New Task")
+        popup.geometry("400x400")
 
-            task_info = {
-                "task": task,
-                "due_date": due_date,
-                "priority": priority,
-                "assigned": assigned,
-                "description": description,
-                "completed": False
-            }
+        tk.Label(popup, text="Task Name:").pack()
+        task_entry = tk.Entry(popup)
+        task_entry.pack()
 
-            self.lists[self.current_list_name].append(task_info)
-            self.update_task_listbox()
-            self.save_lists()
+        tk.Label(popup, text="Due Date:").pack()
+        due_date_entry = tk.Entry(popup)
+        due_date_entry.pack()
+
+        tk.Label(popup, text="Priority (Low, Medium, High):").pack()
+        priority_entry = tk.Entry(popup)
+        priority_entry.pack()
+
+        tk.Label(popup, text="Assigned To:").pack()
+        assigned_entry = tk.Entry(popup)
+        assigned_entry.pack()
+
+        tk.Label(popup, text="Description:").pack()
+        description_text = tk.Text(popup, height=5, width=30)
+        description_text.pack()
+
+        def save_task():
+            task = task_entry.get()
+            due_date = due_date_entry.get()
+            priority = priority_entry.get()
+            assigned = assigned_entry.get()
+            description = description_text.get("1.0", tk.END).strip()
+
+            if task:
+                task_info = {
+                    "task": task,
+                    "due_date": due_date,
+                    "priority": priority,
+                    "assigned": assigned,
+                    "description": description,
+                    "completed": False
+                }
+                self.lists[self.current_list_name].append(task_info)
+                self.update_task_listbox()
+                self.save_lists()
+                popup.destroy()
+            else:
+                messagebox.showerror("Error", "Task name cannot be empty.")
+
+        tk.Button(popup, text="Save Task", command=save_task).pack(pady=10)
+
     
     def mark_as_done(self):
         selected = self.task_listbox.curselection()
