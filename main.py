@@ -1,127 +1,183 @@
 import subprocess
 import os
+import sqlite3
 from tkinter import *
+from tkinter import messagebox
 
-#Widget is a object with specific information or function
 
-#Creating the main window widget
+
+# Connect to SQLite3 database
+conn = sqlite3.connect('users.db')
+cursor = conn.cursor()
+
+# Create table if it doesn't exist
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        username TEXT PRIMARY KEY,
+        email TEXT,
+        password TEXT,
+        role TEXT
+    )
+''')
+conn.commit()
+
+# Creating the main window widget
 root = Tk()
-root.geometry("400x400")
+root.geometry("500x500")  # Adjusted window size
+
+# Configure grid columns to center content
+root.columnconfigure(0, weight=1)
+root.columnconfigure(1, weight=0)
+root.columnconfigure(2, weight=1)
 
 ###### Methods ####################
-root.columnconfigure(0, weight=1)
-root.columnconfigure(1, weight=1)
 
-def on_click():
-	#label = Label(root, text="Click, Click, Click")
-	label = Label(root, text=pie)
-	label.grid(row=0,column=0,columnspan = 2, padx = 20)
+def log_in():
+    username = item_user.get()
+    password = item_password.get()
+
+    cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+    result = cursor.fetchone()
+
+    if result:
+        messagebox.showinfo("Success", "Login successful!")
+        run_Task2()
+    else:
+        messagebox.showerror("Error", "Invalid credentials.")
+
+def run_Task2():
+    if drop_var.get() == "Sign In":
+        script_path = "worker.py"
+        if os.path.exists(script_path):
+            subprocess.run(["python", script_path])
+
+def sign_up():
+    username = item_user.get()
+    password = item_password.get()
+    confirm = item_repassword.get()
+    email = item_email.get()
+    role = role_var.get()
+
+    if password != confirm:
+        messagebox.showerror("Error", "Passwords do not match!")
+        return
+
+    try:
+        cursor.execute("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)",
+                       (username, email, password, role))
+        conn.commit()
+        messagebox.showinfo("Success", "Signup successful!")
+    except sqlite3.IntegrityError:
+        messagebox.showerror("Error", "Username already exists!")
 
 def run_Task():
     if drop_var.get() == "Sign In":
-        script_path = "temp1.py"
-        if os.path.exists(script_path):
-            print(f"Running {script_path}...")
-            subprocess.run(["python", script_path])
-    '''else:
-        if drop_var.get() == "Sign Up":
-            script_path = "worker.py"
-            if os.path.exists(script_path):
-                print(f"Running {script_path}...")
-                subprocess.run(["python", script_path])
-     '''
+        log_in()
+    elif drop_var.get() == "Sign Up":
+        sign_up()
+
 def show_fields(*args):
-    """ Show the Admin and Password fields when a role is selected. """
-    role = drop_var.get()
-    if drop_var.get() in ["Sign In"]:  # If a valid role is selected
+
+    selected_role = role_var.get()
+
+    if drop_var.get() == "Sign In":
         root.geometry("400x400")
+        
+        # Hide Sign Up fields
         email_label.grid_remove()
+        item_email.grid_remove()
         item_repassword.grid_remove()
         reconfirm_password_label.grid_remove()
-        admin_label.config(text=role)
-        admin_label.grid(row=3, column=0, columnspan=2, pady=5)  # Show "Admin"
-        username_label.grid(row=4, column=0, pady=5, padx=0)  # Show username label
-        password_label.grid(row=6, column=0, pady=5, padx=0)  # Show password label
-        item_user.grid(row=5, column=0, columnspan=2, padx =20)  # Show password entry
-        item_password.grid(row=7, column=0, columnspan=2, padx =20)  # Show password entry
-        enter_button = Button(root, text="Enter", command=run_Task)
-        enter_button.grid(row=12, column=0, columnspan=2, pady=10)
-        drop_menu.grid(row=13,column=0,columnspan = 2, padx = 20, pady = 60)
-    if drop_var.get() in ["Sign Up"]:
-        root.geometry("400x450")
-        admin_label.config(text=role)
-        admin_label.grid(row=3, column=0, columnspan=2, pady=5)
-        email_label.grid(row = 4, column = 0, pady = 5, padx = 0)
-        reconfirm_password_label.grid(row =10, column = 0, pady = 5, padx = 0)
-        item_repassword.grid(row=11, column=0, columnspan=2, padx =20)
-        item_email.grid(row=5, column=0, columnspan = 2, padx = 20)
-        username_label.grid(row=6, column=0, pady=5, padx=0)  # Show username label
-        password_label.grid(row=8, column=0, pady=5, padx=0)  # Show password label
-        item_user.grid(row=7, column=0, columnspan=2, padx =20)  # Show password entry
-        item_password.grid(row=9, column=0, columnspan=2, padx =20)  # Show password entry
-        enter1_button = Button(root, text="Enter")
-        enter1_button.grid(row=12, column=0, columnspan=2, pady=10)
-        drop_menu.grid(row=13,column=0,columnspan = 2, padx = 20, pady = 60)
+        role_label.grid_remove()
+        role_menu.grid_remove()
+        enter1_button.grid_remove()  # <--- Hide Sign Up's button
+
+        # Show Sign In fields
+        admin_label.config(text="Log In")
+        admin_label.grid(row=3, column=1, pady=5)
+        username_label.grid(row=4, column=1, pady=5, padx=20, sticky="w")
+        item_user.grid(row=5, column=1, padx=20, sticky="ew")
+        password_label.grid(row=6, column=1, pady=5, padx=20, sticky="w")
+        item_password.grid(row=7, column=1, padx=20, sticky="ew")
+
+        enter_button.grid(row=12, column=1, pady=10, sticky="ew")
+        drop_menu.grid(row=13, column=1, padx=20, pady=60)
+
+    elif drop_var.get() == "Sign Up":
+        root.geometry("400x500")
         
+        # Hide Sign In fields
+        enter_button.grid_remove()  # <--- Hide Sign In's button
 
+        # Show Sign Up fields
+        admin_label.config(text=selected_role)
+        admin_label.grid(row=3, column=1, pady=5)
+        email_label.grid(row=4, column=1, pady=5, padx=20, sticky="w")
+        item_email.grid(row=5, column=1, padx=20, sticky="ew")
+        username_label.grid(row=6, column=1, pady=5, padx=20, sticky="w")
+        item_user.grid(row=7, column=1, padx=20, sticky="ew")
+        password_label.grid(row=8, column=1, pady=5, padx=20, sticky="w")
+        item_password.grid(row=9, column=1, padx=20, sticky="ew")
+        reconfirm_password_label.grid(row=10, column=1, pady=5, padx=20, sticky="w")
+        item_repassword.grid(row=11, column=1, padx=20, sticky="ew")
 
+        role_label.grid(row=12, column=1, pady=5, padx=20, sticky="w")
+        role_menu.grid(row=13, column=1, padx=20, pady=5, sticky="ew")
+
+        enter1_button.grid(row=14, column=1, pady=10, sticky="ew")
+        drop_menu.grid(row=15, column=1, padx=20, pady=20)
 ###### Widgets ####################
 
-label = Label(root, text="Welcome").grid(row=1,column=0,columnspan = 2, padx = 20, pady= 20)
+Label(root, text="Welcome").grid(row=1, column=1, padx=20, pady=20)
 
-button = Button(root, text="Click Here", command=on_click)
-
-# Admin Label 
-
+# Admin Label
 admin_label = Label(root, text="Log In")
-admin_label.grid(row=3, column=0, columnspan=2, pady=5)
-admin_label.grid_remove()  # Hide it at the start
+admin_label.grid_remove()
 
-# Labels for Username and Password (Hidden initially)
 username_label = Label(root, text="Enter Username:")
-username_label.grid_remove()  # Hide initially
+username_label.grid_remove()
 
-password_label = Label(root, text="Enter Password: ")
-password_label.grid_remove()  # Hide initially
+password_label = Label(root, text="Enter Password:")
+password_label.grid_remove()
 
-reconfirm_password_label = Label(root, text="     Confirm Password:")
-reconfirm_password_label.grid_remove()  # Hide initially
+reconfirm_password_label = Label(root, text="Confirm Password:")
+reconfirm_password_label.grid_remove()
 
-email_label = Label(root, text="Enter Email:        ")
-email_label.grid_remove()  # Hide initially
+email_label = Label(root, text="Enter Email:")
+email_label.grid_remove()
 
-
-#Email Entry
 item_email = Entry(root)
-item_email.insert(0, "")
-item_email.grid(row=3, column=0, columnspan=2, sticky="ew")
-item_email.grid_remove()  # Hide it at the start
-#Username Entry
+item_email.grid_remove()
+
 item_user = Entry(root)
-item_user.insert(0, "")
-item_user.grid(row=4, column=0, columnspan=2, sticky="ew")
-item_user.grid_remove()  # Hide it at the start
+item_user.grid_remove()
 
-# Password Entry
-item_password = Entry(root)
-item_password.insert(0, "")
-item_password.grid(row=5, column=0, columnspan=2, sticky="ew")
-item_password.grid_remove()  # Hide it at the start
+item_password = Entry(root, show="*")
+item_password.grid_remove()
 
-item_repassword = Entry(root)
-item_repassword.insert(0, "")
-item_repassword.grid(row=5, column=0, columnspan=2, sticky="ew")
+item_repassword = Entry(root, show="*")
 item_repassword.grid_remove()
 
-#Drop Menu Setup
+# Role Label and Dropdown
+role_label = Label(root, text="Select Role:")
+role_label.grid_remove()
+
+role_var = StringVar()
+role_var.set("Sign Up")
+role_menu = OptionMenu(root, role_var, "Assigner", "Assignee")
+role_menu.grid_remove()
+
+# Enter buttons
+enter_button = Button(root, text="Enter", command=run_Task)
+enter1_button = Button(root, text="Enter", command=run_Task)
+# Initially hidden; shown by `show_fields`
+
+# Drop Menu Setup
 drop_var = StringVar()
 drop_var.set("Log In")
-drop_menu = OptionMenu(root,drop_var,"Sign In","Sign Up")
-drop_menu.grid(row=4,column=0,columnspan = 2, padx = 20)
+drop_menu = OptionMenu(root, drop_var, "Sign In", "Sign Up")
+drop_menu.grid(row=4, column=1, padx=20)
 drop_var.trace_add("write", show_fields)
 
 
-
-#Call the main loop for displaying the root window
 root.mainloop()
-
